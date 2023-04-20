@@ -1,18 +1,10 @@
-import { StyleSheet, Text, View } from 'react-native';
+import Header from "@components/Header";
+import { ContainerView } from "./styles";
 
 export default function Groups() {
   return (
-    <View style={styles.container}>
-      <Text>Groups!</Text>
-    </View>
+    <ContainerView>
+      <Header showBackButton />
+    </ContainerView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
