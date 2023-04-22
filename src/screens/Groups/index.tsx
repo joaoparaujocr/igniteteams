@@ -6,6 +6,7 @@ import { useState } from "react";
 import { FlatList } from "react-native";
 import ListEmpty from "@components/ListEmpty";
 import Group from "src/interfaces/Group/intex";
+import Button from "@components/Button";
 
 export default function Groups() {
   const [groups, setGroups] = useState<Group[]>([
@@ -56,6 +57,7 @@ export default function Groups() {
           }
         }
       />
+      <Button text="Adicionar nova turma" />
     </ContainerView>
   );
 }
