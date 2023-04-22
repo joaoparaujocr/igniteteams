@@ -4,9 +4,11 @@ import Highlight from "@components/Highlight";
 import GroupCard from "@components/GroupCard";
 import { useState } from "react";
 import { FlatList } from "react-native";
+import ListEmpty from "@components/ListEmpty";
+import Group from "src/interfaces/Group/intex";
 
 export default function Groups() {
-  const [groups, setGroups] = useState([
+  const [groups, setGroups] = useState<Group[]>([
     {
       id: 1,
       title: "Turma 1",
@@ -42,11 +44,17 @@ export default function Groups() {
       <Header />
       <Highlight title="Turmas" subtitle="Jogue com a sua turma" />
       <FlatList
+        ListEmptyComponent={<ListEmpty message="Não há turmas" />}
         data={groups}
         renderItem={({ item }) => (
           <GroupCard title={item.title} key={item.id} />
         )}
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={
+          groups.length === 0 && {
+            flex: 1,
+          }
+        }
       />
     </ContainerView>
   );
