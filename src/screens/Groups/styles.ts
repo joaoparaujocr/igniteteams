@@ -1,5 +1,4 @@
 import styled from "styled-components/native";
-import { CaretLeft } from "phosphor-react-native";
 
 export const ContainerView = styled.View`
   flex: 1;
