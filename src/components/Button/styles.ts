@@ -6,7 +6,7 @@ export type TypesColor = "primary" | "secondary";
 
 type TypeColorsButton = Record<TypesColor, string>;
 
-const colorsButton: TypeColorsButton = {
+export const colorsButton: TypeColorsButton = {
   primary: theme.COLORS.GREEN_500,
   secondary: theme.COLORS.RED,
 };

@@ -1,12 +1,12 @@
-import Header from "@components/Header";
-import { ContainerView } from "./styles";
+import ListEmpty from "@components/ListEmpty";
 import Highlight from "@components/Highlight";
 import GroupCard from "@components/GroupCard";
+import Header from "@components/Header";
+import Button from "@components/Button";
+import Group from "src/interfaces/Group/intex";
 import { useState } from "react";
 import { FlatList } from "react-native";
-import ListEmpty from "@components/ListEmpty";
-import Group from "src/interfaces/Group/intex";
-import Button from "@components/Button";
+import { ContainerView } from "./styles";
 
 export default function Groups() {
   const [groups, setGroups] = useState<Group[]>([
