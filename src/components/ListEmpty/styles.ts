@@ -1,4 +1,4 @@
-import styled from "styled-components/native";
+import styled, { css } from "styled-components/native";
 
 export const ViewLisEmpty = styled.View`
   flex: 1;
@@ -8,7 +8,10 @@ export const ViewLisEmpty = styled.View`
 
 export const TextListEmpty = styled.Text`
   text-align: center;
-  font-size: ${({ theme }) => theme.FONT_SIZE.SM}px;
-  font-family: ${({ theme }) => theme.FONT_FAMILY.REGULAR};
-  color: ${({ theme }) => theme.COLORS.GRAY_300};
+
+  ${({ theme: { COLORS, FONT_FAMILY, FONT_SIZE } }) => css`
+    font-size: ${FONT_SIZE.SM}px;
+    font-family: ${FONT_FAMILY.REGULAR};
+    color: ${COLORS.GRAY_300};
+  `}
 `;
