@@ -1,10 +1,20 @@
+import { useState } from "react";
+import { useNavigation } from "@react-navigation/native";
+
+import { ContentView, Icon, NewGroupView } from "./styles";
+
 import Header from "@components/Header";
 import Highlight from "@components/Highlight";
 import Button from "@components/Button";
 import Input from "@components/Input";
-import { ContentView, Icon, NewGroupView } from "./styles";
 
 export default function NewGroup() {
+  const [group, setGroup] = useState("");
+  const navigation = useNavigation();
+
+  const handleGoToPlayers = () => {
+    navigation.navigate("players", { group });
+  };
 
   return (
     <NewGroupView>
@@ -16,10 +26,11 @@ export default function NewGroup() {
           subtitle="crie uma turma para adicionar pessoas"
         />
         <Input
+          onChangeText={setGroup}
           placeholder="Nome da turma"
           style={{ marginBottom: 20 }}
         />
-        <Button text="Criar" />
+        <Button onPress={handleGoToPlayers} text="Criar" />
       </ContentView>
     </NewGroupView>
   );

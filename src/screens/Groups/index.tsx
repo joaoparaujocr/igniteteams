@@ -1,14 +1,18 @@
+import { useState } from "react";
+import { FlatList } from "react-native";
+import { ContainerView } from "./styles";
+import { useNavigation } from "@react-navigation/native";
+
+import Group from "src/interfaces/Group";
+
 import ListEmpty from "@components/ListEmpty";
 import Highlight from "@components/Highlight";
 import GroupCard from "@components/GroupCard";
 import Header from "@components/Header";
 import Button from "@components/Button";
-import Group from "src/interfaces/Group/intex";
-import { useState } from "react";
-import { FlatList } from "react-native";
-import { ContainerView } from "./styles";
 
 export default function Groups() {
+  const navigation = useNavigation();
   const [groups, setGroups] = useState<Group[]>([
     {
       id: 1,
@@ -40,6 +44,10 @@ export default function Groups() {
     },
   ]);
 
+  function handleNewGroup() {
+    navigation.navigate("new");
+  }
+
   return (
     <ContainerView>
       <Header />
@@ -57,7 +65,7 @@ export default function Groups() {
           }
         }
       />
-      <Button text="Adicionar nova turma" />
+      <Button onPress={handleNewGroup} text="Adicionar nova turma" />
     </ContainerView>
   );
 }

@@ -8,7 +8,7 @@ type TypeColorsButton = Record<TypesColor, string>;
 
 export const colorsButton: TypeColorsButton = {
   primary: theme.COLORS.GREEN_500,
-  secondary: theme.COLORS.RED,
+  secondary: theme.COLORS.RED_DARK,
 };
 
 export type ButtonTouchableProps = {
