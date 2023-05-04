@@ -1,4 +1,4 @@
 export default interface Group {
-  id: number;
-  title: string;
+  id: string;
+  name: string;
 }

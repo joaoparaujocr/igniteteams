@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
+import uuid from "react-native-uuid";
 
 import { ContentView, Icon, NewGroupView } from "./styles";
 
@@ -7,13 +8,16 @@ import Header from "@components/Header";
 import Highlight from "@components/Highlight";
 import Button from "@components/Button";
 import Input from "@components/Input";
+import { groupCreate } from "@storage/group/groupCreate";
 
 export default function NewGroup() {
   const [group, setGroup] = useState("");
   const navigation = useNavigation();
 
-  const handleGoToPlayers = () => {
-    navigation.navigate("players", { group });
+  const handleGoToPlayers = async () => {
+    const id = uuid.v4() as string;
+    await groupCreate({ name: group, id });
+    navigation.navigate("players", { name: group, id });
   };
 
   return (
