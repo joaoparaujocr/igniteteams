@@ -19,12 +19,12 @@ import PlayerCard from "@components/PlayerCard";
 import ListEmpty from "@components/ListEmpty";
 import Button from "@components/Button";
 import Group from "@interface/Group";
-import { groupDelete } from "@storage/group/groupDelete";
 import playerAddByGroup from "@storage/player/playerAddByGroup";
 import { AppError } from "@utils/AppError";
 import PlayerStorageDTO from "@interface/PlayerStorageDTO";
 import playersGetByGroup from "@storage/player/playersGetByGroup";
 import playerRemoveByGroup from "@storage/player/playerRemoveByGroup";
+import groupRemoveByName from "@storage/group/groupRemoveByName";
 
 interface CustomRouteProp extends RouteProp<ParamListBase> {
   params: Group;
@@ -41,9 +41,27 @@ export default function Players() {
   const [newPlayer, setNewPlayer] = useState<string>("");
   const [selected, setSelected] = useState<string>("Time A");
 
-  const handleDeleteGroup = async (id: string) => {
-    await groupDelete(id);
-    navigation.navigate("groups");
+  const removeGroup = async () => {
+    try {
+      await groupRemoveByName(groupName);
+      navigation.navigate("groups");
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Remover Grupo", "Ocorreu um erro ao tentar remover");
+    }
+  };
+
+  const handleDeleteGroup = () => {
+    Alert.alert("Remover Grupo", "Deseja remover esse grupo?", [
+      {
+        text: "Não",
+        style: "cancel",
+      },
+      {
+        text: "SIm",
+        onPress: removeGroup,
+      },
+    ]);
   };
 
   const handleDeletePlayer = async (namePlayer: string) => {
@@ -52,7 +70,7 @@ export default function Players() {
       setPlayersAndFilterTeam(players);
     } catch (error) {
       console.error(error);
-      Alert.alert("Remover player", "Não foi possivel remover esse jogador");
+      Alert.alert("Remover jogador", "Não foi possivel remover esse jogador");
     }
   };
 
@@ -77,11 +95,11 @@ export default function Players() {
       fetchGetPlayers();
     } catch (error) {
       if (error instanceof AppError) {
-        Alert.alert("Adicioanar player", error.message);
+        Alert.alert("Adicioanar jogador", error.message);
       } else {
         Alert.alert(
-          "Adicionar player",
-          "Ocorreu algum erro ao adicionar o player"
+          "Adicionar jogador",
+          "Ocorreu algum erro ao adicionar o jogador"
         );
       }
     }
@@ -164,7 +182,7 @@ export default function Players() {
         ]}
       />
       <Button
-        onPress={() => handleDeleteGroup(id)}
+        onPress={handleDeleteGroup}
         text="Remover grupo"
         type="secondary"
       />

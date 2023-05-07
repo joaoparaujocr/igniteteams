@@ -3,7 +3,7 @@ import { TextInput } from "react-native";
 import { css } from "styled-components/native";
 
 export const TextInputStyle = styled(TextInput)`
-  height: 56px;
+  max-height: 56px;
   border-radius: 6px;
   padding: 16px;
   flex: 1;
