@@ -25,6 +25,7 @@ import PlayerStorageDTO from "@interface/PlayerStorageDTO";
 import playersGetByGroup from "@storage/player/playersGetByGroup";
 import playerRemoveByGroup from "@storage/player/playerRemoveByGroup";
 import groupRemoveByName from "@storage/group/groupRemoveByName";
+import Loading from "@components/Loading";
 
 interface CustomRouteProp extends RouteProp<ParamListBase> {
   params: Group;
@@ -33,9 +34,10 @@ interface CustomRouteProp extends RouteProp<ParamListBase> {
 export default function Players() {
   const navigation = useNavigation();
   const {
-    params: { name: groupName, id },
+    params: { name: groupName },
   } = useRoute<CustomRouteProp>();
   const inputRef = useRef<TextInput>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [allPlayers, setAllPlayers] = useState<PlayerStorageDTO[]>([]);
   const [playersFilter, setPlayersFilter] = useState<PlayerStorageDTO[]>([]);
   const [newPlayer, setNewPlayer] = useState<string>("");
@@ -106,8 +108,16 @@ export default function Players() {
   }
 
   async function fetchGetPlayers() {
-    const players = await playersGetByGroup(groupName);
-    setPlayersAndFilterTeam(players);
+    try {
+      setIsLoading(true);
+      const players = await playersGetByGroup(groupName);
+      setPlayersAndFilterTeam(players);
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Carregar jogadores", "Ocorreu um erro");
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   useFocusEffect(
@@ -159,32 +169,37 @@ export default function Players() {
         />
         <NumbersOfPlayes>{playersFilter.length}</NumbersOfPlayes>
       </HeaderList>
-      <FlatList
-        data={playersFilter}
-        renderItem={({ item: { name, team } }) => {
-          if (team === selected) {
-            return (
-              <PlayerCard
-                key={team}
-                name={name}
-                handleClose={() => handleDeletePlayer(name)}
-              />
-            );
-          }
-          return <Fragment />;
-        }}
-        ListEmptyComponent={<ListEmpty message="Não há players nesse time" />}
-        contentContainerStyle={[
-          {
-            paddingBottom: 50,
-          },
-          playersFilter.length === 0 && { flex: 1 },
-        ]}
-      />
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <FlatList
+          data={playersFilter}
+          renderItem={({ item: { name, team } }) => {
+            if (team === selected) {
+              return (
+                <PlayerCard
+                  key={team}
+                  name={name}
+                  handleClose={() => handleDeletePlayer(name)}
+                />
+              );
+            }
+            return <Fragment />;
+          }}
+          ListEmptyComponent={<ListEmpty message="Não há players nesse time" />}
+          contentContainerStyle={[
+            {
+              paddingBottom: 50,
+            },
+            playersFilter.length === 0 && { flex: 1 },
+          ]}
+        />
+      )}
       <Button
         onPress={handleDeleteGroup}
         text="Remover grupo"
         type="secondary"
+        disabled={isLoading}
       />
     </PlayersView>
   );
