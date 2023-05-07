@@ -24,6 +24,7 @@ import playerAddByGroup from "@storage/player/playerAddByGroup";
 import { AppError } from "@utils/AppError";
 import PlayerStorageDTO from "@interface/PlayerStorageDTO";
 import playersGetByGroup from "@storage/player/playersGetByGroup";
+import playerRemoveByGroup from "@storage/player/playerRemoveByGroup";
 
 interface CustomRouteProp extends RouteProp<ParamListBase> {
   params: Group;
@@ -32,7 +33,7 @@ interface CustomRouteProp extends RouteProp<ParamListBase> {
 export default function Players() {
   const navigation = useNavigation();
   const {
-    params: { name, id },
+    params: { name: groupName, id },
   } = useRoute<CustomRouteProp>();
   const inputRef = useRef<TextInput>(null);
   const [allPlayers, setAllPlayers] = useState<PlayerStorageDTO[]>([]);
@@ -45,14 +46,32 @@ export default function Players() {
     navigation.navigate("groups");
   };
 
+  const handleDeletePlayer = async (namePlayer: string) => {
+    try {
+      const players = await playerRemoveByGroup(namePlayer, groupName);
+      setPlayersAndFilterTeam(players);
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Remover player", "Não foi possivel remover esse jogador");
+    }
+  };
+
   const handleTeam = (team: string) => {
     setSelected(team);
     setPlayersFilter(allPlayers.filter((player) => player.team === team));
   };
 
+  function setPlayersAndFilterTeam(players: PlayerStorageDTO[]) {
+    const playersFilterByTeam = players.filter(
+      (player) => player.team === selected
+    );
+    setAllPlayers(players);
+    setPlayersFilter(playersFilterByTeam);
+  }
+
   async function handleAddNewPlayer() {
     try {
-      await playerAddByGroup({ name: newPlayer, team: selected }, name);
+      await playerAddByGroup({ name: newPlayer, team: selected }, groupName);
       inputRef.current?.blur();
       setNewPlayer("");
       fetchGetPlayers();
@@ -69,13 +88,8 @@ export default function Players() {
   }
 
   async function fetchGetPlayers() {
-    const players = await playersGetByGroup(name);
-    const playersFilterByTeam = players.filter(
-      (player) => player.team === selected
-    );
-
-    setAllPlayers(players);
-    setPlayersFilter(playersFilterByTeam);
+    const players = await playersGetByGroup(groupName);
+    setPlayersAndFilterTeam(players);
   }
 
   useFocusEffect(
@@ -87,7 +101,10 @@ export default function Players() {
   return (
     <PlayersView>
       <Header showBackButton />
-      <Highlight title={name} subtitle="adicione a galera e separe os times" />
+      <Highlight
+        title={groupName}
+        subtitle="adicione a galera e separe os times"
+      />
       <Form>
         <Input
           inputRef={inputRef}
@@ -128,7 +145,13 @@ export default function Players() {
         data={playersFilter}
         renderItem={({ item: { name, team } }) => {
           if (team === selected) {
-            return <PlayerCard key={team} name={name} handleClose={() => {}} />;
+            return (
+              <PlayerCard
+                key={team}
+                name={name}
+                handleClose={() => handleDeletePlayer(name)}
+              />
+            );
           }
           return <Fragment />;
         }}
