@@ -3,8 +3,7 @@ import { FlatList } from "react-native";
 import { ContainerView } from "./styles";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 
-import Group from "src/interfaces/Group";
-
+import Group from "@interface/Group";
 import ListEmpty from "@components/ListEmpty";
 import Highlight from "@components/Highlight";
 import GroupCard from "@components/GroupCard";
@@ -23,11 +22,14 @@ export default function Groups() {
   async function fetchGroups() {
     try {
       const data = await groupsGetAll();
-      console.log(data);
       setGroups(data);
     } catch (error) {
       console.error(error);
     }
+  }
+
+  function goToGroup(group: Group) {
+    navigation.navigate("players", group);
   }
 
   useFocusEffect(
@@ -43,7 +45,13 @@ export default function Groups() {
       <FlatList
         ListEmptyComponent={<ListEmpty message="Não há turmas" />}
         data={groups}
-        renderItem={({ item }) => <GroupCard title={item.name} key={item.id} />}
+        renderItem={({ item }) => (
+          <GroupCard
+            onPress={() => goToGroup(item)}
+            title={item.name}
+            key={item.id}
+          />
+        )}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={
           groups.length === 0 && {

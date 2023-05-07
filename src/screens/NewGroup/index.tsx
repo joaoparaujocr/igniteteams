@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import uuid from "react-native-uuid";
+import { Alert } from "react-native";
 
 import { ContentView, Icon, NewGroupView } from "./styles";
 
@@ -9,15 +9,24 @@ import Highlight from "@components/Highlight";
 import Button from "@components/Button";
 import Input from "@components/Input";
 import { groupCreate } from "@storage/group/groupCreate";
+import { AppError } from "@utils/AppError";
 
 export default function NewGroup() {
   const [group, setGroup] = useState("");
   const navigation = useNavigation();
 
   const handleGoToPlayers = async () => {
-    const id = uuid.v4() as string;
-    await groupCreate({ name: group, id });
-    navigation.navigate("players", { name: group, id });
+    try {
+      const newGroup = await groupCreate(group);
+      navigation.navigate("players", newGroup);
+    } catch (error) {
+      if (error instanceof AppError) {
+        Alert.alert("Novo grupo", error.message);
+      } else {
+        Alert.alert("Novo grupo", "Ocorreu um erro ao criar o grupo");
+        console.error(error);
+      }
+    }
   };
 
   return (

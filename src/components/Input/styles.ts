@@ -6,6 +6,7 @@ export const TextInputStyle = styled(TextInput)`
   height: 56px;
   border-radius: 6px;
   padding: 16px;
+  flex: 1;
 
   ${({ theme: { COLORS, FONT_FAMILY, FONT_SIZE } }) => css`
     font-size: ${FONT_SIZE.MD}px;
