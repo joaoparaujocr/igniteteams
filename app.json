@@ -1,4 +1,7 @@
 {
   "name": "igniteteams",
-  "slug": "igniteteams"
+  "slug": "igniteteams",
+  "plugins": [
+    "expo-font"
+  ]
 }
