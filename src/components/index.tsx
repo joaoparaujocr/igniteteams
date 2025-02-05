@@ -6,5 +6,6 @@ import { Input } from "./Input";
 import { ListEmpty } from "./ListEmpty";
 import { Loading } from "./Loading";
 import { ButtonIcon } from "./ButtonIcon";
+import { Filter } from "./Filter";
 
-export { Button, GroupCard, Header, Highlight, Input, ListEmpty, Loading, ButtonIcon }
+export { Button, GroupCard, Header, Highlight, Input, ListEmpty, Loading, ButtonIcon, Filter }
