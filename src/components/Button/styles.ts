@@ -9,7 +9,7 @@ export interface ButtonStyledProps {
   type: ButtonType
 }
 
-const bgColorType: { [key in ButtonType]: string } = {
+export const bgColorType: { [key in ButtonType]: string } = {
   primary: theme.COLORS.GREEN_700,
   secondary: theme.COLORS.RED_DARK
 }
