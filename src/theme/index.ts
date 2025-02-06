@@ -28,5 +28,5 @@ export default {
     LG: 18,
     XL: 24
   },
-  color: 'dark'
+  color: ''
 };
