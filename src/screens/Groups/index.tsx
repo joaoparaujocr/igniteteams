@@ -30,6 +30,10 @@ export default function Groups() {
     navigation.navigate('new')
   }
 
+  const handleOpenGroup = (group: string) => {
+    navigation.navigate('players', { group })
+  }
+
   return (
     <Container>
       <Header />
@@ -45,7 +49,7 @@ export default function Groups() {
         renderItem={({ item }) => (
           <GroupCard
             title={item}
-            onPress={() => console.log(item)}
+            onPress={() => handleOpenGroup(item)}
           />
         )}
         ListEmptyComponent={<ListEmpty message='Não há grupos' />}
