@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Alert } from "react-native";
 import { groupCreate } from "@storage/group/groupCreate";
+import { AppError } from "@utils/AppError";
 
 export default function NewGroup() {
   const [group, setGroup] = useState('')
@@ -15,9 +16,17 @@ export default function NewGroup() {
       return Alert.alert('Erro ao criar uma turma', 'É preciso inserir o nome da turma')
     }
 
-    await groupCreate(group)
+    try {
+      await groupCreate(group)
+      navigation.navigate('players', { group })
 
-    navigation.navigate('players', { group })
+    } catch (error) {
+      if (error instanceof AppError) {
+        Alert.alert('Novo grupo', error.message)
+      }
+
+      console.log(error)
+    }
   }
 
   return (
