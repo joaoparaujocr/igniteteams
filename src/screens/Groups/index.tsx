@@ -1,14 +1,30 @@
 
 import { Container } from './styles';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { FlatList } from 'react-native';
 import { ListEmpty, Header, GroupCard, Highlight, Button } from '@components/index';
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation, useFocusEffect } from '@react-navigation/native'
+import { useTheme } from 'styled-components/native';
+import { groupsGetAll } from '@storage/group/groupsGetAll';
 
 export default function Groups() {
+  const theme = useTheme()
   const [groups, setGroups] = useState([])
 
   const navigation = useNavigation()
+
+  const fetchGroups = useCallback(async () => {
+    try {
+      const allGroups = await groupsGetAll()
+      setGroups(allGroups)
+    } catch (error) {
+      console.error(error)
+    }
+  }, [])
+
+  useFocusEffect(() => {
+    fetchGroups()
+  })
 
   const handleNewGroup = () => {
     navigation.navigate('new')
@@ -33,7 +49,7 @@ export default function Groups() {
           />
         )}
         ListEmptyComponent={<ListEmpty message='Não há grupos' />}
-        contentContainerStyle={groups.length === 0 && { flex: 1 }}
+        contentContainerStyle={groups.length === 0 && { flex: 1, backgroundColor: theme.COLORS.GRAY_600 }}
       />
 
       <Button

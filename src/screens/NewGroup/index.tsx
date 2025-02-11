@@ -3,16 +3,19 @@ import { Container, Content, Icon } from "./styles";
 import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Alert } from "react-native";
+import { groupCreate } from "@storage/group/groupCreate";
 
 export default function NewGroup() {
   const [group, setGroup] = useState('')
 
   const navigation = useNavigation()
 
-  const handleNew = () => {
+  const handleNew = async () => {
     if (group.trim().length === 0) {
       return Alert.alert('Erro ao criar uma turma', 'É preciso inserir o nome da turma')
     }
+
+    await groupCreate(group)
 
     navigation.navigate('players', { group })
   }
