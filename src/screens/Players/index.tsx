@@ -8,6 +8,7 @@ import { AppError } from "@utils/AppError";
 import { playersGetByGroup } from "@storage/player/playersGetByGroup";
 import { PlayerStorageDTO } from "@storage/player/PlayerStorageDTO";
 import { playersGetByGroupAndTeam } from "@storage/player/playersGetByGroupAndTeam";
+import { playerRemoveByGroup } from "@storage/player/playerRemoveByGroup";
 
 interface RouteParams {
   group: string
@@ -56,6 +57,16 @@ export default function Players() {
     }
   }
 
+  const handleRemovePlayer = async (playerName: string) => {
+    try {
+      await playerRemoveByGroup(playerName, group)
+      await fetchPlayersByTeam()
+    } catch (error) {
+      Alert.alert('Excluir player', 'Ocorreu um erro durante a exlusão.')
+      console.log(error)
+    }
+  }
+
   useFocusEffect(useCallback(() => {
     fetchPlayersByTeam()
   }, [team]))
@@ -101,7 +112,7 @@ export default function Players() {
       <FlatList
         data={players}
         keyExtractor={item => item.name}
-        renderItem={({ item }) => <PlayerCard name={item.name} onRemove={() => console.log('remover')} />}
+        renderItem={({ item }) => <PlayerCard name={item.name} onRemove={() => handleRemovePlayer(item.name)} />}
         ListEmptyComponent={<ListEmpty message="Não há pessoas nesse time" />}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[{ paddingBottom: 50 }, players.length === 0 && { flex: 1 }]}
