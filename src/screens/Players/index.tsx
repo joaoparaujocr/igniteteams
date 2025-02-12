@@ -2,13 +2,13 @@ import { Button, ButtonIcon, Filter, Header, Highlight, Input, ListEmpty, Player
 import { Container, CountPlayersList, Form, HeaderList } from "./styles";
 import { Alert, FlatList, TextInput } from "react-native";
 import { useCallback, useRef, useState } from "react";
-import { useFocusEffect, useRoute } from "@react-navigation/native";
+import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
 import { playerAddByGroup } from "@storage/player/playerAddByGroup";
 import { AppError } from "@utils/AppError";
-import { playersGetByGroup } from "@storage/player/playersGetByGroup";
 import { PlayerStorageDTO } from "@storage/player/PlayerStorageDTO";
 import { playersGetByGroupAndTeam } from "@storage/player/playersGetByGroupAndTeam";
 import { playerRemoveByGroup } from "@storage/player/playerRemoveByGroup";
+import { groupRemoveByName } from "@storage/group/groupRemoveByName";
 
 interface RouteParams {
   group: string
@@ -19,6 +19,7 @@ export default function Players() {
   const [team, setTeam] = useState('Time A')
   const [players, setPlayers] = useState<PlayerStorageDTO[]>([])
   const inputRef = useRef<TextInput | null>(null)
+  const navigation = useNavigation()
 
   const { group } = useRoute().params as RouteParams
 
@@ -65,6 +66,31 @@ export default function Players() {
       Alert.alert('Excluir player', 'Ocorreu um erro durante a exlusão.')
       console.log(error)
     }
+  }
+
+  const groupRemove = async () => {
+    try {
+      await groupRemoveByName(group)
+      navigation.navigate('groups')
+    } catch (error) {
+      Alert.alert('Remover Grupo', 'Não foi possivel remover o Grupo.')
+    }
+  }
+
+  const handleRemoveGroup = () => {
+    Alert.alert(
+      'Remover grupo',
+      'Você deseja remover o grupo?',
+      [
+        {
+          text: 'Não',
+          style: 'cancel'
+        },
+        {
+          text: 'Sim',
+          onPress: groupRemove
+        },
+      ])
   }
 
   useFocusEffect(useCallback(() => {
@@ -120,6 +146,7 @@ export default function Players() {
       <Button
         title="Remover Turma"
         type="secondary"
+        onPress={handleRemoveGroup}
       />
     </Container>
   )
