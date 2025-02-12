@@ -1,18 +1,64 @@
 import { Button, ButtonIcon, Filter, Header, Highlight, Input, ListEmpty, PlayerCard } from "@components/index";
 import { Container, CountPlayersList, Form, HeaderList } from "./styles";
-import { FlatList } from "react-native";
-import { useState } from "react";
-import { useRoute } from "@react-navigation/native";
+import { Alert, FlatList, TextInput } from "react-native";
+import { useCallback, useRef, useState } from "react";
+import { useFocusEffect, useRoute } from "@react-navigation/native";
+import { playerAddByGroup } from "@storage/player/playerAddByGroup";
+import { AppError } from "@utils/AppError";
+import { playersGetByGroup } from "@storage/player/playersGetByGroup";
+import { PlayerStorageDTO } from "@storage/player/PlayerStorageDTO";
+import { playersGetByGroupAndTeam } from "@storage/player/playersGetByGroupAndTeam";
 
 interface RouteParams {
   group: string
 }
 
 export default function Players() {
+  const [name, setName] = useState('')
   const [team, setTeam] = useState('Time A')
-  const [players, setPlayers] = useState([])
+  const [players, setPlayers] = useState<PlayerStorageDTO[]>([])
+  const inputRef = useRef<TextInput | null>(null)
 
   const { group } = useRoute().params as RouteParams
+
+  const fetchPlayersByTeam = async () => {
+    try {
+      const playersByGroup = await playersGetByGroupAndTeam(group, team)
+      setPlayers(playersByGroup)
+    } catch (error) {
+      Alert.alert('Players', 'Não foi possivel carregar os players do time selecionado.')
+      console.log(error)
+    }
+  }
+
+  const handleAddPlayer = async () => {
+    if (name.trim().length === 0) {
+      return Alert.alert('Novo Player', 'O nome precisa estar preenchido.')
+    }
+
+    try {
+      const player = {
+        name,
+        team
+      }
+
+      await playerAddByGroup(player, group)
+      await fetchPlayersByTeam()
+      setName('')
+      inputRef.current.blur()
+    } catch (error) {
+      if (error instanceof AppError) {
+        Alert.alert('Novo Player', error.message)
+      } else {
+        Alert.alert('Novo Player', 'Não foi possível adicionar o novo player.')
+        console.log(error)
+      }
+    }
+  }
+
+  useFocusEffect(useCallback(() => {
+    fetchPlayersByTeam()
+  }, [team]))
 
   return (
     <Container>
@@ -23,8 +69,16 @@ export default function Players() {
       />
 
       <Form>
-        <Input placeholder="Nome da pessoa" autoCorrect={false} />
-        <ButtonIcon icon="add" />
+        <Input
+          inputRef={inputRef}
+          placeholder="Nome da pessoa"
+          autoCorrect={false}
+          onChangeText={setName}
+          value={name}
+          onSubmitEditing={handleAddPlayer}
+          returnKeyType="done"
+        />
+        <ButtonIcon icon="add" onPress={handleAddPlayer} />
       </Form>
 
       <HeaderList>
@@ -40,14 +94,14 @@ export default function Players() {
         />
 
         <CountPlayersList>
-          0
+          {players.length}
         </CountPlayersList>
       </HeaderList>
 
       <FlatList
         data={players}
-        keyExtractor={item => item}
-        renderItem={({ item }) => <PlayerCard name={item} onRemove={() => console.log('remover')} />}
+        keyExtractor={item => item.name}
+        renderItem={({ item }) => <PlayerCard name={item.name} onRemove={() => console.log('remover')} />}
         ListEmptyComponent={<ListEmpty message="Não há pessoas nesse time" />}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[{ paddingBottom: 50 }, players.length === 0 && { flex: 1 }]}

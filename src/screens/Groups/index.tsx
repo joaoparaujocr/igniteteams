@@ -13,18 +13,18 @@ export default function Groups() {
 
   const navigation = useNavigation()
 
-  const fetchGroups = useCallback(async () => {
+  const fetchGroups = async () => {
     try {
       const allGroups = await groupsGetAll()
       setGroups(allGroups)
     } catch (error) {
       console.error(error)
     }
-  }, [])
+  }
 
-  useFocusEffect(() => {
+  useFocusEffect(useCallback(() => {
     fetchGroups()
-  })
+  }, []))
 
   const handleNewGroup = () => {
     navigation.navigate('new')
