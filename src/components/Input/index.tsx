@@ -4,7 +4,7 @@ import { useTheme } from "styled-components/native";
 import { RefObject } from "react";
 
 interface InputProps extends TextInputProps {
-  inputRef: RefObject<TextInput>
+  inputRef?: RefObject<TextInput>
 }
 
 export function Input({ inputRef, ...rest }: InputProps) {
